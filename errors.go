@@ -19,10 +19,10 @@ type Error interface {
 }
 
 type errorInfo struct {
-	_Caller []CallerInfo
-	_Wraped []error
-	_Error  error
-	_Code   int
+	XCaller []CallerInfo `json:"Caller,omitempty"`
+	XWraped []error      `json:"Wraped,omitempty"`
+	XError  error        `json:"Error,omitempty"`
+	XCode   int          `json:"Code,omitempty"`
 }
 
 type CallerInfo struct {
@@ -33,31 +33,31 @@ type CallerInfo struct {
 
 func New(msg string) error {
 	return &errorInfo{
-		_Caller: Caller(2),
-		_Error:  errors.New(msg),
+		XCaller: Caller(2),
+		XError:  errors.New(msg),
 	}
 }
 
 func Newf(format string, args ...interface{}) error {
 	return &errorInfo{
-		_Caller: Caller(2),
-		_Error:  fmt.Errorf(format, args...),
+		XCaller: Caller(2),
+		XError:  fmt.Errorf(format, args...),
 	}
 }
 
 func NewWithCode(code int, msg string) error {
 	return &errorInfo{
-		_Caller: Caller(2),
-		_Error:  errors.New(msg),
-		_Code:   code,
+		XCaller: Caller(2),
+		XError:  errors.New(msg),
+		XCode:   code,
 	}
 }
 
 func NewWithCodef(code int, format string, args ...interface{}) error {
 	return &errorInfo{
-		_Caller: Caller(2),
-		_Error:  fmt.Errorf(format, args...),
-		_Code:   code,
+		XCaller: Caller(2),
+		XError:  fmt.Errorf(format, args...),
+		XCode:   code,
 	}
 }
 
@@ -67,24 +67,24 @@ func NewFromJson(json string) error {
 
 func Wrap(err error, msg string) error {
 	p := &errorInfo{
-		_Caller: Caller(2),
-		_Wraped: []error{err},
-		_Error:  fmt.Errorf("%s -> {%v}", msg, err),
+		XCaller: Caller(2),
+		XWraped: []error{err},
+		XError:  fmt.Errorf("%s -> {%v}", msg, err),
 	}
 	if e, ok := err.(Error); ok {
-		p._Wraped = append(p._Wraped, e.Wraped()...)
+		p.XWraped = append(p.XWraped, e.Wraped()...)
 	}
 	return p
 }
 
 func Wrapf(err error, format string, args ...interface{}) error {
 	p := &errorInfo{
-		_Caller: Caller(2),
-		_Wraped: []error{err},
-		_Error:  fmt.Errorf("%s -> {%v}", fmt.Sprintf(format, args...), err),
+		XCaller: Caller(2),
+		XWraped: []error{err},
+		XError:  fmt.Errorf("%s -> {%v}", fmt.Sprintf(format, args...), err),
 	}
 	if e, ok := err.(Error); ok {
-		p._Wraped = append(p._Wraped, e.Wraped()...)
+		p.XWraped = append(p.XWraped, e.Wraped()...)
 	}
 	return p
 }
@@ -109,19 +109,19 @@ func Caller(skip int) []CallerInfo {
 }
 
 func (p *errorInfo) Caller() []CallerInfo {
-	return p._Caller
+	return p.XCaller
 }
 
 func (p *errorInfo) Wraped() []error {
-	return p._Wraped
+	return p.XWraped
 }
 
 func (p *errorInfo) Error() string {
-	return p._Error.Error()
+	return p.XError.Error()
 }
 
 func (p *errorInfo) Code() int {
-	return p._Code
+	return p.XCode
 }
 
 func (p *errorInfo) _MarshalJSON() ([]byte, error) {
