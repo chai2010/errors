@@ -1,15 +1,9 @@
-# Go errors process
+// Copyright 2015 <chaishushan{AT}gmail.com>. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
 
+// +build ingore
 
-# Install
-
-1. `go get github.com/chai2010/errors`
-2. `go run hello.go`
-
-
-# Example
-
-```Go
 package main
 
 import (
@@ -65,11 +59,3 @@ func main() {
 	// err7: wraped(1): err:main2 -> {err:init1}
 	// err7: wraped(2): err:init1
 }
-```
-
-# BUGS
-
-Report bugs to <chaishushan@gmail.com>.
-
-Thanks!
-
