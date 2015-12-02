@@ -29,7 +29,7 @@ func init() {
 }
 
 func init() {
-	e2 = errors.New("err:init1")
+	e2 = errors.New("err:init2")
 }
 
 func main() {
@@ -55,8 +55,8 @@ func main() {
 
 	// Output:
 	// err:init0 [{main.init hello.go 16}]
-	// err:init1 [{main.init.1 hello.go 22} {main.init hello.go 58}]
-	// err:init1 [{main.init.2 hello.go 26} {main.init hello.go 58}]
+	// err:init1 [{main.init.1 hello.go 22} {main.init hello.go 61}]
+	// err:init2 [{main.init.2 hello.go 26} {main.init hello.go 61}]
 	// err:main0 [{main.main hello.go 30}]
 	// err:main1 [{main.main.func1 hello.go 32} {main.main hello.go 33}]
 	// err:main2 -> {err:init1} [{main.main hello.go 34}]
