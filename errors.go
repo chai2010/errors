@@ -43,6 +43,10 @@ func Newf(format string, args ...interface{}) error {
 	}
 }
 
+func NewFromJson(json string) error {
+	panic("TODO")
+}
+
 func Wrap(err error, msg string) error {
 	p := &errorInfo{
 		_Caller: Caller(2),
@@ -96,4 +100,12 @@ func (p *errorInfo) Wraped() []error {
 
 func (p *errorInfo) Error() string {
 	return p._Error.Error()
+}
+
+func (p *errorInfo) _MarshalJSON() ([]byte, error) {
+	panic("TODO")
+}
+
+func (p *errorInfo) _UnmarshalJSON([]byte) error {
+	panic("TODO")
 }
