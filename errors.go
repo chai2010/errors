@@ -14,6 +14,7 @@ import (
 type Error interface {
 	Caller() []CallerInfo
 	Wraped() []error
+	Code() int
 	error
 }
 
@@ -21,6 +22,7 @@ type errorInfo struct {
 	_Caller []CallerInfo
 	_Wraped []error
 	_Error  error
+	_Code   int
 }
 
 type CallerInfo struct {
@@ -40,6 +42,22 @@ func Newf(format string, args ...interface{}) error {
 	return &errorInfo{
 		_Caller: Caller(2),
 		_Error:  fmt.Errorf(format, args...),
+	}
+}
+
+func NewWithCode(code int, msg string) error {
+	return &errorInfo{
+		_Caller: Caller(2),
+		_Error:  errors.New(msg),
+		_Code:   code,
+	}
+}
+
+func NewWithCodef(code int, format string, args ...interface{}) error {
+	return &errorInfo{
+		_Caller: Caller(2),
+		_Error:  fmt.Errorf(format, args...),
+		_Code:   code,
 	}
 }
 
@@ -100,6 +118,10 @@ func (p *errorInfo) Wraped() []error {
 
 func (p *errorInfo) Error() string {
 	return p._Error.Error()
+}
+
+func (p *errorInfo) Code() int {
+	return p._Code
 }
 
 func (p *errorInfo) _MarshalJSON() ([]byte, error) {
