@@ -33,13 +33,13 @@ func init() {
 }
 
 func main() {
-	var e3 = errors.New("err:main0")
+	var e3 = errors.New("err:main3")
 	var e4 = func() error {
-		return errors.New("err:main1")
+		return errors.New("err:main4")
 	}()
-	var e5 = errors.Wrap(e1, "err:main2")
-	var e6 = errors.Wrap(e5, "err:main3")
-	var e7 = errors.Wrap(e6, "err:main3")
+	var e5 = errors.Wrap(e1, "err:main5")
+	var e6 = errors.Wrap(e5, "err:main6")
+	var e7 = errors.Wrap(e6, "err:main7")
 
 	fmt.Println(e0, e0.(errors.Error).Caller())
 	fmt.Println(e1, e1.(errors.Error).Caller())
@@ -57,12 +57,12 @@ func main() {
 	// err:init0 [{main.init hello.go 16}]
 	// err:init1 [{main.init.1 hello.go 22} {main.init hello.go 61}]
 	// err:init2 [{main.init.2 hello.go 26} {main.init hello.go 61}]
-	// err:main0 [{main.main hello.go 30}]
-	// err:main1 [{main.main.func1 hello.go 32} {main.main hello.go 33}]
-	// err:main2 -> {err:init1} [{main.main hello.go 34}]
-	// err:main3 -> {err:main2 -> {err:init1}} [{main.main hello.go 35}]
-	// err7: wraped(0): err:main3 -> {err:main2 -> {err:init1}}
-	// err7: wraped(1): err:main2 -> {err:init1}
+	// err:main3 [{main.main hello.go 30}]
+	// err:main4 [{main.main.func1 hello.go 32} {main.main hello.go 33}]
+	// err:main5 -> {err:init1} [{main.main hello.go 34}]
+	// err:main6 -> {err:main5 -> {err:init1}} [{main.main hello.go 35}]
+	// err7: wraped(0): err:main6 -> {err:main5 -> {err:init1}}
+	// err7: wraped(1): err:main5 -> {err:init1}
 	// err7: wraped(2): err:init1
 }
 ```
