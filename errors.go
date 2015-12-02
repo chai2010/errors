@@ -67,14 +67,15 @@ func Wrapf(err error, format string, args ...interface{}) error {
 	return p
 }
 
-func Caller(skip int) (infos []CallerInfo) {
+func Caller(skip int) []CallerInfo {
+	var infos []CallerInfo
 	for ; ; skip++ {
 		name, file, line, ok := callerInfo(skip + 1)
 		if !ok {
-			return
+			return infos
 		}
 		if strings.HasPrefix(name, "runtime.") {
-			return
+			return infos
 		}
 		infos = append(infos, CallerInfo{
 			FuncName: name,
@@ -82,7 +83,7 @@ func Caller(skip int) (infos []CallerInfo) {
 			FileLine: line,
 		})
 	}
-	return
+	panic("unreached!")
 }
 
 func (p *errorInfo) Caller() []CallerInfo {
