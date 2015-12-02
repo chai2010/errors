@@ -63,6 +63,22 @@ func NewWithCodef(code int, format string, args ...interface{}) error {
 
 func NewFromJson(json string) error {
 	panic("TODO")
+	if json == "" || reEmpty.MatchString(json) {
+		return nil
+	}
+	var err errorInfo
+	if e := jsonDecode([]byte(json), &err); e != nil {
+		fmt.Println(e.Error())
+		return &errorInfo{
+			XCaller: Caller(1), // skip == 1
+			XWraped: []error{e},
+			XError:  fmt.Errorf("errors.NewFromJson: jsonDecode failed: %v!", e),
+		}
+	}
+	if err.XError == nil {
+		return nil
+	}
+	return &err
 }
 
 func Wrap(err error, msg string) error {
@@ -124,10 +140,6 @@ func (p *errorInfo) Code() int {
 	return p.XCode
 }
 
-func (p *errorInfo) _MarshalJSON() ([]byte, error) {
-	panic("TODO")
-}
-
-func (p *errorInfo) _UnmarshalJSON([]byte) error {
+func (p *errorInfo) UnmarshalJSON([]byte) error {
 	panic("TODO")
 }

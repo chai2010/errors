@@ -5,12 +5,15 @@
 package errors
 
 import (
+	"bytes"
+	"encoding/json"
 	"regexp"
 	"runtime"
 	"strings"
 )
 
 var (
+	reEmpty   = regexp.MustCompile(`^\s*$`)
 	reInit    = regexp.MustCompile(`init·\d+$`) // main.init·1
 	reClosure = regexp.MustCompile(`func·\d+$`) // main.func·001
 )
@@ -48,4 +51,17 @@ func callerInfo(skip int) (name, file string, line int, ok bool) {
 		file = file[idx+1:]
 	}
 	return
+}
+
+func jsonEncode(m interface{}) []byte {
+	data, err := json.MarshalIndent(m, "", "\t")
+	if err != nil {
+		return nil
+	}
+	data = bytes.Replace(data, []byte("\n"), []byte("\r\n"), -1)
+	return data
+}
+
+func jsonDecode(data []byte, m interface{}) error {
+	return json.Unmarshal(data, m)
 }
