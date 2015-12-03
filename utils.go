@@ -54,6 +54,14 @@ func callerInfo(skip int) (name, file string, line int, ok bool) {
 }
 
 func jsonEncode(m interface{}) []byte {
+	data, err := json.Marshal(m)
+	if err != nil {
+		return nil
+	}
+	return data
+}
+
+func jsonEncodeIndent(m interface{}) []byte {
 	data, err := json.MarshalIndent(m, "", "\t")
 	if err != nil {
 		return nil
