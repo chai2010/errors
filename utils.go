@@ -62,6 +62,10 @@ func jsonEncode(m interface{}) []byte {
 	return data
 }
 
+func jsonEncodeString(m interface{}) string {
+	return string(jsonEncode(m))
+}
+
 func jsonDecode(data []byte, m interface{}) error {
 	return json.Unmarshal(data, m)
 }

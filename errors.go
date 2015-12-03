@@ -21,8 +21,8 @@ type Error interface {
 type errorInfo struct {
 	XCaller []CallerInfo `json:"Caller,omitempty"`
 	XWraped []error      `json:"Wraped,omitempty"`
-	XError  error        `json:"Error,omitempty"`
-	XCode   int          `json:"Code,omitempty"`
+	XError  error        `json:"Error"`
+	XCode   int          `json:"Code"`
 }
 
 type CallerInfo struct {
@@ -62,30 +62,22 @@ func NewWithCodef(code int, format string, args ...interface{}) error {
 }
 
 func NewFromJson(json string) error {
-	panic("TODO")
-	if json == "" || reEmpty.MatchString(json) {
-		return nil
-	}
-	var err errorInfo
-	if e := jsonDecode([]byte(json), &err); e != nil {
-		fmt.Println(e.Error())
+	p, err := newFromJson(json)
+	if err != nil {
 		return &errorInfo{
 			XCaller: Caller(1), // skip == 1
-			XWraped: []error{e},
-			XError:  fmt.Errorf("errors.NewFromJson: jsonDecode failed: %v!", e),
+			XWraped: []error{err},
+			XError:  errors.New(fmt.Sprintf("errors.NewFromJson: jsonDecode failed: %v!", err)),
 		}
 	}
-	if err.XError == nil {
-		return nil
-	}
-	return &err
+	return p.ToError()
 }
 
 func Wrap(err error, msg string) error {
 	p := &errorInfo{
 		XCaller: Caller(2),
 		XWraped: []error{err},
-		XError:  fmt.Errorf("%s -> {%v}", msg, err),
+		XError:  errors.New(fmt.Sprintf("%s -> {%v}", msg, err)),
 	}
 	if e, ok := err.(Error); ok {
 		p.XWraped = append(p.XWraped, e.Wraped()...)
@@ -97,7 +89,7 @@ func Wrapf(err error, format string, args ...interface{}) error {
 	p := &errorInfo{
 		XCaller: Caller(2),
 		XWraped: []error{err},
-		XError:  fmt.Errorf("%s -> {%v}", fmt.Sprintf(format, args...), err),
+		XError:  errors.New(fmt.Sprintf("%s -> {%v}", fmt.Sprintf(format, args...), err)),
 	}
 	if e, ok := err.(Error); ok {
 		p.XWraped = append(p.XWraped, e.Wraped()...)
@@ -140,6 +132,15 @@ func (p *errorInfo) Code() int {
 	return p.XCode
 }
 
-func (p *errorInfo) UnmarshalJSON([]byte) error {
-	panic("TODO")
+func (p *errorInfo) MarshalJSON() ([]byte, error) {
+	return jsonEncode(newFrom(p)), nil
+}
+
+func (p *errorInfo) UnmarshalJSON(data []byte) error {
+	px, err := newFromJson(string(data))
+	if err != nil {
+		return err
+	}
+	*p = *px.ToErrorInfo()
+	return nil
 }
