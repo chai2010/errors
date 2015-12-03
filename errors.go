@@ -97,6 +97,32 @@ func Wrapf(err error, format string, args ...interface{}) error {
 	return p
 }
 
+func WrapWithCode(code int, err error, msg string) error {
+	p := &errorInfo{
+		XCaller: Caller(2),
+		XWraped: []error{err},
+		XError:  errors.New(fmt.Sprintf("%s -> {%v}", msg, err)),
+		XCode:   code,
+	}
+	if e, ok := err.(Error); ok {
+		p.XWraped = append(p.XWraped, e.Wraped()...)
+	}
+	return p
+}
+
+func WrapWithCodef(code int, err error, format string, args ...interface{}) error {
+	p := &errorInfo{
+		XCaller: Caller(2),
+		XWraped: []error{err},
+		XError:  errors.New(fmt.Sprintf("%s -> {%v}", fmt.Sprintf(format, args...), err)),
+		XCode:   code,
+	}
+	if e, ok := err.(Error); ok {
+		p.XWraped = append(p.XWraped, e.Wraped()...)
+	}
+	return p
+}
+
 func Caller(skip int) []CallerInfo {
 	var infos []CallerInfo
 	for ; ; skip++ {
