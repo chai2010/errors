@@ -6,7 +6,14 @@ package errors
 
 import (
 	"errors"
+	"reflect"
+	"unsafe"
 )
+
+type comparison struct {
+	p unsafe.Pointer
+	t reflect.Type
+}
 
 type errorString string
 
@@ -19,9 +26,22 @@ type errorInfoJson struct {
 	XCode   int              `json:"Code"`
 }
 
-func newFrom(err error) *errorInfoJson {
+func newFrom(err error, seen map[comparison]bool) *errorInfoJson {
 	if err == nil {
 		return nil
+	}
+
+	if seen == nil {
+		seen = make(map[comparison]bool)
+	}
+	if x := reflect.ValueOf(err); x.CanAddr() {
+		c := comparison{unsafe.Pointer(x.UnsafeAddr()), x.Type()}
+		if seen[c] {
+			return &errorInfoJson{
+				XError: errorString(err.Error()),
+			}
+		}
+		seen[c] = true
 	}
 
 	x, ok := err.(Error)
@@ -33,7 +53,7 @@ func newFrom(err error) *errorInfoJson {
 
 	getwraped := func(x Error) (wraped []*errorInfoJson) {
 		for _, it := range x.Wraped() {
-			if v := newFrom(it); v != nil {
+			if v := newFrom(it, seen); v != nil {
 				wraped = append(wraped, v) // call newFrom
 			}
 		}
@@ -51,6 +71,7 @@ func toErrorInfo(x *errorInfoJson) *errorInfo {
 	if x == nil {
 		return nil
 	}
+
 	if x.XError == "" && x.XCode == 0 {
 		return &errorInfo{}
 	}

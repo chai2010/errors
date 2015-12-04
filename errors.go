@@ -159,7 +159,7 @@ func (p *errorInfo) Code() int {
 }
 
 func (p *errorInfo) MarshalJSON() ([]byte, error) {
-	return jsonEncode(newFrom(p)), nil
+	return jsonEncode(newFrom(p, nil)), nil
 }
 
 func (p *errorInfo) UnmarshalJSON(data []byte) error {

@@ -114,7 +114,7 @@ func Example_json() {
 
 	errx := errors.NewFromJson(string(err3JsonData))
 	if !reflect.DeepEqual(errx, err3) {
-		log.Fatal(errx, "!=", err3)
+		log.Fatal("errors_test.Example_json:", errx, "!=", err3)
 	}
 
 	fmt.Println("done")
