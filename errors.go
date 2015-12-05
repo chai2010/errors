@@ -167,6 +167,10 @@ func (p *errorInfo) UnmarshalJSON(data []byte) error {
 	if err != nil {
 		return err
 	}
-	*p = *px.ToErrorInfo()
+	if px != nil {
+		*p = *px.ToErrorInfo()
+	} else {
+		*p = errorInfo{}
+	}
 	return nil
 }
