@@ -11,18 +11,25 @@ import (
 	"strings"
 )
 
+var (
+	_ Error        = (*_Error)(nil)
+	_ fmt.Stringer = (*_Error)(nil)
+)
+
 type Error interface {
 	Caller() []CallerInfo
 	Wraped() []error
 	Code() int
 	error
+
+	private()
 }
 
-type errorInfo struct {
+type _Error struct {
+	XCode   int          `json:"Code"`
+	XError  error        `json:"Error"`
 	XCaller []CallerInfo `json:"Caller,omitempty"`
 	XWraped []error      `json:"Wraped,omitempty"`
-	XError  error        `json:"Error"`
-	XCode   int          `json:"Code"`
 }
 
 type CallerInfo struct {
@@ -32,21 +39,21 @@ type CallerInfo struct {
 }
 
 func New(msg string) error {
-	return &errorInfo{
+	return &_Error{
 		XCaller: Caller(2),
 		XError:  errors.New(msg),
 	}
 }
 
 func Newf(format string, args ...interface{}) error {
-	return &errorInfo{
+	return &_Error{
 		XCaller: Caller(2),
 		XError:  fmt.Errorf(format, args...),
 	}
 }
 
 func NewWithCode(code int, msg string) error {
-	return &errorInfo{
+	return &_Error{
 		XCaller: Caller(2),
 		XError:  errors.New(msg),
 		XCode:   code,
@@ -54,7 +61,7 @@ func NewWithCode(code int, msg string) error {
 }
 
 func NewWithCodef(code int, format string, args ...interface{}) error {
-	return &errorInfo{
+	return &_Error{
 		XCaller: Caller(2),
 		XError:  fmt.Errorf(format, args...),
 		XCode:   code,
@@ -62,19 +69,19 @@ func NewWithCodef(code int, format string, args ...interface{}) error {
 }
 
 func NewFromJson(json string) error {
-	p, err := newFromJson(json)
+	p, err := newErrorStructFromJson(json)
 	if err != nil {
-		return &errorInfo{
+		return &_Error{
 			XCaller: Caller(1), // skip == 1
 			XWraped: []error{err},
 			XError:  errors.New(fmt.Sprintf("errors.NewFromJson: jsonDecode failed: %v!", err)),
 		}
 	}
-	return p.ToError()
+	return p.ToStdError()
 }
 
 func Wrap(err error, msg string) error {
-	p := &errorInfo{
+	p := &_Error{
 		XCaller: Caller(2),
 		XWraped: []error{err},
 		XError:  errors.New(fmt.Sprintf("%s -> {%v}", msg, err)),
@@ -86,7 +93,7 @@ func Wrap(err error, msg string) error {
 }
 
 func Wrapf(err error, format string, args ...interface{}) error {
-	p := &errorInfo{
+	p := &_Error{
 		XCaller: Caller(2),
 		XWraped: []error{err},
 		XError:  errors.New(fmt.Sprintf("%s -> {%v}", fmt.Sprintf(format, args...), err)),
@@ -98,7 +105,7 @@ func Wrapf(err error, format string, args ...interface{}) error {
 }
 
 func WrapWithCode(code int, err error, msg string) error {
-	p := &errorInfo{
+	p := &_Error{
 		XCaller: Caller(2),
 		XWraped: []error{err},
 		XError:  errors.New(fmt.Sprintf("%s -> {%v}", msg, err)),
@@ -111,7 +118,7 @@ func WrapWithCode(code int, err error, msg string) error {
 }
 
 func WrapWithCodef(code int, err error, format string, args ...interface{}) error {
-	p := &errorInfo{
+	p := &_Error{
 		XCaller: Caller(2),
 		XWraped: []error{err},
 		XError:  errors.New(fmt.Sprintf("%s -> {%v}", fmt.Sprintf(format, args...), err)),
@@ -142,35 +149,43 @@ func Caller(skip int) []CallerInfo {
 	panic("unreached!")
 }
 
-func (p *errorInfo) Caller() []CallerInfo {
+func (p *_Error) Caller() []CallerInfo {
 	return p.XCaller
 }
 
-func (p *errorInfo) Wraped() []error {
+func (p *_Error) Wraped() []error {
 	return p.XWraped
 }
 
-func (p *errorInfo) Error() string {
+func (p *_Error) Error() string {
 	return p.XError.Error()
 }
 
-func (p *errorInfo) Code() int {
+func (p *_Error) Code() int {
 	return p.XCode
 }
 
-func (p *errorInfo) MarshalJSON() ([]byte, error) {
-	return jsonEncode(newFrom(p, nil)), nil
+func (p *_Error) String() string {
+	return jsonEncodeString(p)
 }
 
-func (p *errorInfo) UnmarshalJSON(data []byte) error {
-	px, err := newFromJson(string(data))
+func (p *_Error) MarshalJSON() ([]byte, error) {
+	return jsonEncode(newErrorStruct(p)), nil
+}
+
+func (p *_Error) UnmarshalJSON(data []byte) error {
+	px, err := newErrorStructFromJson(string(data))
 	if err != nil {
 		return err
 	}
 	if px != nil {
-		*p = *px.ToErrorInfo()
+		*p = *px.ToError()
 	} else {
-		*p = errorInfo{}
+		*p = _Error{}
 	}
 	return nil
+}
+
+func (p *_Error) private() {
+	panic("unreached!")
 }

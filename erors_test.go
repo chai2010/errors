@@ -28,6 +28,8 @@ func TestError_json(t *testing.T) {
 
 	errx := NewFromJson(string(jsonEncode(err3)))
 	if !reflect.DeepEqual(errx, err3) {
+		t.Logf("errx: %s\n", jsonEncodeString(errx))
+		t.Logf("err3: %s\n", jsonEncodeString(err3))
 		t.Fatal(errx, "!=", err3)
 	}
 }

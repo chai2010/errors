@@ -121,3 +121,13 @@ func Example_json() {
 	// Output:
 	// done
 }
+
+func Example_stringer() {
+	err0 := errors.New("err0")
+	err1 := errors.Wrap(err0, "err1")
+	err2 := func() error { return errors.Wrap(err1, "err2") }()
+	err3 := func() error { return errors.Wrap(err2, "err3") }()
+
+	fmt.Println(err3)                         // fmt.Println(err3.Error())
+	fmt.Println(err3.(fmt.Stringer).String()) // print json string
+}
