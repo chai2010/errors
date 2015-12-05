@@ -61,8 +61,8 @@ Output:
 
 ```
 err:init0 [{main.init hello.go 16}]
-err:init1 [{main.init.1 hello.go 22} {main.init hello.go 63}]
-err:init2 [{main.init.2 hello.go 26} {main.init hello.go 63}]
+err:init1 [{main.init.1 hello.go 22} {main.init hello.go 51}]
+err:init2 [{main.init.2 hello.go 26} {main.init hello.go 51}]
 err:main3 [{main.main hello.go 30}]
 err:main4 [{main.main.func1 hello.go 32} {main.main hello.go 33}]
 err:main5 -> {err:init1} [{main.main hello.go 34}]
@@ -72,7 +72,7 @@ err7: wraped(1): err:main5 -> {err:init1}
 err7: wraped(2): err:init1
 err7: {
 	"Code": 0,
-	"Error": "err:main7 -\u003e {err:main6 -\u003e {err:main5 -\u003e {err:init1}}}",
+	"Error": "err:main7 -> {err:main6 -> {err:main5 -> {err:init1}}}",
 	"Caller": [
 		{
 			"FuncName": "main.main",
@@ -83,7 +83,7 @@ err7: {
 	"Wraped": [
 		{
 			"Code": 0,
-			"Error": "err:main6 -\u003e {err:main5 -\u003e {err:init1}}",
+			"Error": "err:main6 -> {err:main5 -> {err:init1}}",
 			"Caller": [
 				{
 					"FuncName": "main.main",
@@ -94,7 +94,7 @@ err7: {
 		},
 		{
 			"Code": 0,
-			"Error": "err:main5 -\u003e {err:init1}",
+			"Error": "err:main5 -> {err:init1}",
 			"Caller": [
 				{
 					"FuncName": "main.main",
@@ -115,7 +115,7 @@ err7: {
 				{
 					"FuncName": "main.init",
 					"FileName": "hello.go",
-					"FileLine": 63
+					"FileLine": 51
 				}
 			]
 		}

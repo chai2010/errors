@@ -5,6 +5,7 @@
 package errors
 
 import (
+	"bytes"
 	"encoding/json"
 	"regexp"
 	"runtime"
@@ -57,6 +58,9 @@ func jsonEncode(m interface{}) []byte {
 	if err != nil {
 		return nil
 	}
+	data = bytes.Replace(data, []byte("\\u003c"), []byte("<"), -1) // <
+	data = bytes.Replace(data, []byte("\\u003e"), []byte(">"), -1) // >
+	data = bytes.Replace(data, []byte("\\u0026"), []byte("&"), -1) // &
 	return data
 }
 
@@ -65,6 +69,9 @@ func jsonEncodeIndent(m interface{}) []byte {
 	if err != nil {
 		return nil
 	}
+	data = bytes.Replace(data, []byte("\\u003c"), []byte("<"), -1) // <
+	data = bytes.Replace(data, []byte("\\u003e"), []byte(">"), -1) // >
+	data = bytes.Replace(data, []byte("\\u0026"), []byte("&"), -1) // &
 	return data
 }
 
