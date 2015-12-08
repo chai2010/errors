@@ -131,3 +131,25 @@ func Example_stringer() {
 	fmt.Println(err3)                         // fmt.Println(err3.Error())
 	fmt.Println(err3.(fmt.Stringer).String()) // print json string
 }
+
+func ExampleCaller_skip0() {
+	skip0Caller := errors.Caller(0)
+
+	fmt.Println(skip0Caller[0].FuncName)
+	fmt.Println(skip0Caller[1].FuncName)
+
+	// Output:
+	// github.com/chai2010/errors.Caller
+	// github.com/chai2010/errors_test.ExampleCaller_skip0
+}
+
+func ExampleCaller_skip1() {
+	skip1Caller := errors.Caller(1)
+
+	fmt.Println(skip1Caller[0].FuncName)
+	fmt.Println(skip1Caller[1].FuncName)
+
+	// Output:
+	// github.com/chai2010/errors_test.ExampleCaller_skip1
+	// testing.runExample
+}
