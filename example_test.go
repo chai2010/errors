@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"runtime"
+	"strings"
 
 	"github.com/chai2010/errors"
 )
@@ -64,6 +66,15 @@ func Example_wraped() {
 
 	fmt.Println(err3)
 	for j, x := range err3.(errors.Error).Caller() {
+		if j == 0 {
+			// Closure path is different between Go1.4 and Go1.5
+			ver := runtime.Version()
+			if strings.HasPrefix(ver, "go1.3") || strings.HasPrefix(ver, "go1.4") {
+				if x.FuncName == "github.com/chai2010/errors_test.func" {
+					x.FuncName = "github.com/chai2010/errors_test.Example_wraped.func"
+				}
+			}
+		}
 		fmt.Printf("caller:%d: %s\n", j, x.FuncName)
 	}
 	for i, err := range err3.(errors.Error).Wraped() {
