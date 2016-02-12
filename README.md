@@ -1,5 +1,7 @@
 # Go errors process
 
+[![Build Status](https://travis-ci.org/chai2010/errors.svg)](https://travis-ci.org/chai2010/errors)
+[![GoDoc](https://godoc.org/github.com/chai2010/errors?status.svg)](https://godoc.org/github.com/chai2010/errors)
 
 # Install
 
@@ -128,4 +130,3 @@ err7: {
 Report bugs to <chaishushan@gmail.com>.
 
 Thanks!
-
