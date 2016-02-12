@@ -14,8 +14,8 @@ import (
 
 var (
 	reEmpty   = regexp.MustCompile(`^\s*$`)
-	reInit    = regexp.MustCompile(`init·\d+$`) // main.init·1
-	reClosure = regexp.MustCompile(`func·\d+$`) // main.func·001
+	reInit    = regexp.MustCompile(`init·?\d+$`) // main.init·1
+	reClosure = regexp.MustCompile(`func·?\d+$`) // main.func·001
 )
 
 // name format:

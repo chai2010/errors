@@ -74,14 +74,14 @@ func Example_wraped() {
 	}
 	// Output:
 	// err3 -> {err2 -> {err1 -> {err0}}}
-	// caller:0: github.com/chai2010/errors_test.Example_wraped.func2
+	// caller:0: github.com/chai2010/errors_test.Example_wraped.func
 	// caller:1: github.com/chai2010/errors_test.Example_wraped
 	// caller:2: testing.runExample
 	// caller:3: testing.RunExamples
 	// caller:4: testing.(*M).Run
 	// caller:5: main.main
 	// wraped:0: err2 -> {err1 -> {err0}}
-	//     caller:0: github.com/chai2010/errors_test.Example_wraped.func1
+	//     caller:0: github.com/chai2010/errors_test.Example_wraped.func
 	//     caller:1: github.com/chai2010/errors_test.Example_wraped
 	//     caller:2: testing.runExample
 	//     caller:3: testing.RunExamples
