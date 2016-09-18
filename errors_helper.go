@@ -106,9 +106,16 @@ func (p *_ErrorStruct) ToError() *_Error {
 	return errx
 }
 
+func (p *_ErrorStruct) ToErrorInterface() Error {
+	if x := p.ToError(); x != nil {
+		return x
+	}
+	return nil
+}
+
 func (p *_ErrorStruct) ToStdError() error {
 	if p.XError == "" && p.XCode == 0 {
 		return nil
 	}
-	return p.ToError()
+	return p.ToErrorInterface()
 }

@@ -80,6 +80,27 @@ func NewFromJson(json string) error {
 	return p.ToStdError()
 }
 
+func FromJson(json string) (Error, error) {
+	p, err := newErrorStructFromJson(json)
+	if err != nil {
+		return nil, &_Error{
+			XCaller: Caller(1), // skip == 1
+			XWraped: []error{err},
+			XError:  errors.New(fmt.Sprintf("errors.NewFromJson: jsonDecode failed: %v!", err)),
+		}
+	}
+
+	return p.ToErrorInterface(), nil
+}
+
+func ToJson(err error) string {
+	if p, ok := (err).(*_Error); ok {
+		return p.String()
+	}
+	p := &_Error{XError: err}
+	return p.String()
+}
+
 func Wrap(err error, msg string) error {
 	p := &_Error{
 		XCaller: Caller(2),
