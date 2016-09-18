@@ -68,14 +68,10 @@ func NewWithCodef(code int, format string, args ...interface{}) error {
 	}
 }
 
-func NewFromJson(json string) error {
+func MustFromJson(json string) error {
 	p, err := newErrorStructFromJson(json)
 	if err != nil {
-		return &_Error{
-			XCaller: Caller(1), // skip == 1
-			XWraped: []error{err},
-			XError:  errors.New(fmt.Sprintf("errors.NewFromJson: jsonDecode failed: %v!", err)),
-		}
+		panic(err)
 	}
 	return p.ToStdError()
 }
@@ -86,7 +82,7 @@ func FromJson(json string) (Error, error) {
 		return nil, &_Error{
 			XCaller: Caller(1), // skip == 1
 			XWraped: []error{err},
-			XError:  errors.New(fmt.Sprintf("errors.NewFromJson: jsonDecode failed: %v!", err)),
+			XError:  errors.New(fmt.Sprintf("errors.FromJson: jsonDecode failed: %v!", err)),
 		}
 	}
 

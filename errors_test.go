@@ -59,7 +59,7 @@ func TestError_json(t *testing.T) {
 	err2 := func() error { return Wrap(err1, "err2") }()
 	err3 := func() error { return Wrap(err2, "err3") }()
 
-	errx := NewFromJson(string(jsonEncode(err3)))
+	errx := MustFromJson(string(jsonEncode(err3)))
 	if !reflect.DeepEqual(errx, err3) {
 		t.Logf("errx: %s\n", jsonEncodeString(errx))
 		t.Logf("err3: %s\n", jsonEncodeString(err3))

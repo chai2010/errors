@@ -123,7 +123,7 @@ func Example_json() {
 		log.Fatal(err)
 	}
 
-	errx := errors.NewFromJson(string(err3JsonData))
+	errx := errors.MustFromJson(string(err3JsonData))
 	if !reflect.DeepEqual(errx, err3) {
 		log.Fatal("errors_test.Example_json:", errx, "!=", err3)
 	}
