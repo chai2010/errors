@@ -45,6 +45,19 @@ func New(msg string) error {
 	}
 }
 
+func NewFrom(err error) error {
+	if err == nil {
+		return nil
+	}
+	if e, ok := err.(Error); ok {
+		return e
+	}
+	return &_Error{
+		XCaller: Caller(2),
+		XError:  err,
+	}
+}
+
 func Newf(format string, args ...interface{}) error {
 	return &_Error{
 		XCaller: Caller(2),
